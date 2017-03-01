@@ -1,5 +1,5 @@
 defmodule Rumblr.User do
-  user Rumblr.Web, :model
+  use Rumblr.Web, :model
 
   schema "users" do
     
