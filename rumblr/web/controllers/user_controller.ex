@@ -5,6 +5,10 @@ defmodule Rumblr.UserController do
   alias Rumblr.User
 
   def index(conn, _params) do
+    case authenticate(conn) do
+      %Plug.Conn{halted: true} = conn ->
+        conn
+    end
     users = Repo.all( Rumblr.User )
     render conn, "index.html", users: users
   end
@@ -15,7 +19,7 @@ defmodule Rumblr.UserController do
   end
 
   def create(conn, %{"user" => user_params}) do
-    changeset = User.changeset( %User{}, user_params )
+    changeset = User.registration_changeset( %User{}, user_params )
     case Repo.insert(changeset) do
       { :ok, user } ->
         conn
