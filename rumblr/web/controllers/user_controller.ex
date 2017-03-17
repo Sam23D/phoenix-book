@@ -2,14 +2,11 @@ defmodule Rumblr.UserController do
   
   use Rumblr.Web, :controller
   
+  plug :authenticate when action in [ :index, :show ]
+  
   alias Rumblr.User
-
   def index(conn, _params) do
-    case authenticate(conn) do
-      %Plug.Conn{halted: true} = conn ->
-        conn
-    end
-    users = Repo.all( Rumblr.User )
+    users = Repo.all(Rumblr.User)
     render conn, "index.html", users: users
   end
 
@@ -23,14 +20,28 @@ defmodule Rumblr.UserController do
     case Repo.insert(changeset) do
       { :ok, user } ->
         conn
+        |> Rumblr.Auth.login(user)
         |> put_flash(:info, "#{user.name} created!"  )
         |>redirect( to: user_path(conn, :index) )
       { :error, changeset } ->
         render(conn, "new.html", changeset: changeset )
     end
   end
+  
   def  new(conn, _params) do
     changeset = User.changeset( %User{} )
     render conn, "new.html", changeset: changeset
+  end
+  
+  #Plugs
+  defp authenticate(conn, _opts) do
+      if conn.assigns.current_user do
+        conn
+      else
+        conn
+        |> put_flash(:error, "You must be logged in to acces that paeg")
+        |> redirect(to: page_path(conn, :index))
+        |> halt()
+      end
   end
 end

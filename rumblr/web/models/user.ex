@@ -32,17 +32,9 @@ defmodule Rumblr.User do
       _ ->
         changeset
     end
-    
-    defp authenticate(conn) do
-      if conn.assings.curren_user do
-        conn
-      else
-        conn
-        |> put_flash(:error, "You must be logged in to acces that paeg")
-        |> redirect(to: page_path(conn, :index))
-        |> halt()
-      end
-    end
+       
   end
+  
+  
 
 end
