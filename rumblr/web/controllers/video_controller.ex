@@ -2,7 +2,8 @@ defmodule Rumblr.VideoController do
   use Rumblr.Web, :controller
 
   alias Rumblr.Video
-
+  alias Rumblr.Category
+  
   def action(conn, _) do
     apply(__MODULE__, action_name(conn), 
       [conn, conn.params, conn.assigns.current_user])
